@@ -142,17 +142,17 @@ $produkLabel = [
           <?php endforeach; ?>
         </tbody>
         <tfoot>
-          <tr class="bg-amber-50 border-t border-amber-200">
-            <td class="px-4 py-2.5 font-bold text-gray-700 text-xs">
+          <tr class="bg-amber-50 border-t-2 border-amber-300">
+            <td class="px-4 py-2.5 font-bold text-gray-900 text-xs">
               Total<?= $lastPage > 1 ? ' (hal. ini)' : '' ?>
             </td>
-            <td class="px-3 py-2.5 text-center font-bold text-gray-600 text-xs">
+            <td class="px-3 py-2.5 text-center font-bold text-gray-900 text-xs">
               <?= count($setorans) ?>×
             </td>
-            <td class="px-3 py-2.5 text-right font-bold text-gray-800">
+            <td class="px-3 py-2.5 text-right font-bold text-gray-900">
               <?= number_format($sumKg, 2, ',', '.') ?>
             </td>
-            <td class="px-4 py-2.5 text-right font-bold text-green-600">
+            <td class="px-4 py-2.5 text-right font-bold text-gray-900">
               <?= idr($sumHarga) ?>
             </td>
             <td></td>
