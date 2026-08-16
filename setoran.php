@@ -109,10 +109,14 @@ $produkLabel = [
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($setorans as $s):
+          <?php
+          $sumKg = 0.0; $sumHarga = 0.0;
+          foreach ($setorans as $s):
             $tgl     = $s['tanggal_setor'] ?? '';
             $jp      = $s['jenis_produk']  ?? '';
             $anomali = !empty($s['is_anomali']);
+            $sumKg    += (float)($s['berat_kg']    ?? 0);
+            $sumHarga += (float)($s['total_harga'] ?? 0);
           ?>
           <tr class="border-t border-gray-50 hover:bg-amber-50 transition-colors <?= $anomali ? 'bg-red-50' : '' ?>">
             <td class="px-4 py-3 text-gray-700 whitespace-nowrap text-xs font-medium">
@@ -137,6 +141,23 @@ $produkLabel = [
           </tr>
           <?php endforeach; ?>
         </tbody>
+        <tfoot>
+          <tr class="bg-amber-50 border-t border-amber-200">
+            <td class="px-4 py-2.5 font-bold text-gray-700 text-xs">
+              Total<?= $lastPage > 1 ? ' (hal. ini)' : '' ?>
+            </td>
+            <td class="px-3 py-2.5 text-center font-bold text-gray-600 text-xs">
+              <?= count($setorans) ?>×
+            </td>
+            <td class="px-3 py-2.5 text-right font-bold text-gray-800">
+              <?= number_format($sumKg, 2, ',', '.') ?>
+            </td>
+            <td class="px-4 py-2.5 text-right font-bold text-green-600">
+              <?= idr($sumHarga) ?>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
