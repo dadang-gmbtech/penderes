@@ -24,13 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $res = apiCall('login', 'POST', ['email' => $email, 'password' => $password]);
 
         if ($res['ok'] && !empty($res['data']['token'])) {
-            $d      = $res['data'];
-            $petani = $d['petani'] ?? [];
+            $d = $res['data'];
             saveSession(
                 $d['token'],
-                $petani['nama']        ?? 'Petani',
-                $petani['kode_petani'] ?? '-',
-                (int) ($petani['id']   ?? 0),
+                $d['nama']        ?? 'Petani',
+                $d['kode_petani'] ?? '-',
+                (int) ($d['petani_id'] ?? 0),
             );
             header('Location: ' . APP_URL . '/dashboard.php');
             exit;

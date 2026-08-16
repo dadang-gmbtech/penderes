@@ -12,16 +12,16 @@ $profilRes = apiCall('profil',  'GET', [], $token);
 $rekapRes  = apiCall('rekap',   'GET', [], $token);
 $lahanRes  = apiCall('lahan',   'GET', [], $token);
 
-// Profil: { petani: { id, nama, kode_petani, ... } }
-$profil = arr($profilRes['data'] ?? [], 'petani');
+// Profil: { data: { id, kode_petani, nama, no_hp, desa, kecamatan, kabupaten, aktif } }
+$profil = $profilRes['data'] ?? [];
 
-// Rekap: { ringkasan: { total_kg, total_uang, jumlah_setor }, rekap_bulanan: [...] }
+// Rekap: { data: { bulanan: [...], total: { total_kg, total_harga, jumlah_setor, jumlah_anomali } } }
 $rekapData = $rekapRes['data'] ?? [];
-$total     = $rekapData['ringkasan']   ?? [];
-$bulanan   = $rekapData['rekap_bulanan'] ?? [];
+$total     = $rekapData['total']   ?? [];
+$bulanan   = $rekapData['bulanan'] ?? [];
 
-// Lahan: { total_lahan, total_pohon, lahans: [...] }
-$lahans = arr($lahanRes['data'] ?? [], 'lahans') ?? [];
+// Lahan: { data: [{ id, kode_lahan, nama_lahan, pohon_di_deres, ... }] }
+$lahans = $lahanRes['data'] ?? [];
 // Urutkan bulanan: terlama → terbaru untuk grafik
 $bulananAsc = array_reverse($bulanan);
 
@@ -83,7 +83,7 @@ $chartJson = json_encode([
 
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 border-l-4" style="border-left-color:#10b981">
         <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Hasil Penjualan</p>
-        <p class="text-base font-bold text-gray-800 mt-1"><?= idr($total['total_uang'] ?? 0) ?></p>
+        <p class="text-base font-bold text-gray-800 mt-1"><?= idr($total['total_harga'] ?? 0) ?></p>
         <p class="text-xs text-gray-400">total diterima</p>
       </div>
 
@@ -189,7 +189,7 @@ $chartJson = json_encode([
                 <?= number_format($total['total_kg'] ?? 0, 1, ',', '.') ?> kg
               </td>
               <td class="px-4 py-2.5 text-right font-bold text-green-600">
-                <?= idr($total['total_uang'] ?? 0) ?>
+                <?= idr($total['total_harga'] ?? 0) ?>
               </td>
               <td class="px-3 py-2.5 text-center">—</td>
             </tr>

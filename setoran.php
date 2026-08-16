@@ -18,14 +18,14 @@ $qs = http_build_query(array_filter([
 ]));
 $endpoint = 'setoran' . ($qs ? "?$qs" : '');
 
-// Response: { data: [...], meta: { total, per_page, current_page, last_page } }
+// Response: { data: { data: [...], current_page, last_page, total } }
 $res         = apiCall($endpoint, 'GET', [], $token);
 $resBody     = $res['data'] ?? [];
-$setorans    = $resBody['data']              ?? [];
-$meta        = $resBody['meta']              ?? [];
-$currentPage = (int) ($meta['current_page'] ?? 1);
-$lastPage    = (int) ($meta['last_page']    ?? 1);
-$total       = (int) ($meta['total']        ?? 0);
+$paginated   = $resBody['data']              ?? [];
+$setorans    = $paginated['data']            ?? [];
+$currentPage = (int) ($paginated['current_page'] ?? 1);
+$lastPage    = (int) ($paginated['last_page']    ?? 1);
+$total       = (int) ($paginated['total']        ?? 0);
 
 // ── Buat opsi filter 12 bulan terakhir ───────────────────────────────────
 $monthOpts = [];
@@ -122,7 +122,7 @@ function pageUrl(int $p, string $bulan): string {
           <?= htmlspecialchars($cfg['label']) ?>
         </span>
         <span class="text-xs text-gray-400">
-          <?= htmlspecialchars($s['tanggal'] ?? '-') ?>
+          <?= htmlspecialchars($s['tanggal_setor'] ?? '-') ?>
         </span>
       </div>
 
