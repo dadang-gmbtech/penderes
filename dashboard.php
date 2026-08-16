@@ -216,27 +216,29 @@ $chartJson = json_encode([
   if (!ctx) return;
 
   new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: raw.labels,
       datasets: [
         {
           label: 'Total (kg)',
           data: raw.kg,
-          backgroundColor: 'rgba(245,158,11,0.85)',
           borderColor: 'rgba(217,119,6,1)',
-          borderWidth: 1,
-          borderRadius: 4,
+          backgroundColor: 'rgba(245,158,11,0.1)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: 'rgba(217,119,6,1)',
+          fill: false,
+          tension: 0.3,
           yAxisID: 'yKg',
         },
         {
           label: 'Penjualan (Rp)',
           data: raw.harga,
-          type: 'line',
           borderColor: 'rgba(16,185,129,0.9)',
           backgroundColor: 'rgba(16,185,129,0.1)',
           borderWidth: 2,
-          pointRadius: 3,
+          pointRadius: 4,
           pointBackgroundColor: 'rgba(16,185,129,1)',
           fill: false,
           tension: 0.3,
