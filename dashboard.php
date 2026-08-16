@@ -12,16 +12,16 @@ $profilRes = apiCall('profil',  'GET', [], $token);
 $rekapRes  = apiCall('rekap',   'GET', [], $token);
 $lahanRes  = apiCall('lahan',   'GET', [], $token);
 
-// Profil: { data: { id, kode_petani, nama, no_hp, desa, kecamatan, kabupaten, aktif } }
-$profil = $profilRes['data'] ?? [];
+// Profil: JSON body = { data: { id, kode_petani, nama, ... } }  → ambil ['data']['data']
+$profil = $profilRes['data']['data'] ?? [];
 
-// Rekap: { data: { bulanan: [...], total: { total_kg, total_harga, jumlah_setor, jumlah_anomali } } }
-$rekapData = $rekapRes['data'] ?? [];
+// Rekap: JSON body = { data: { bulanan: [...], total: {...} } }  → ambil ['data']['data']
+$rekapData = $rekapRes['data']['data'] ?? [];
 $total     = $rekapData['total']   ?? [];
 $bulanan   = $rekapData['bulanan'] ?? [];
 
-// Lahan: { data: [{ id, kode_lahan, nama_lahan, pohon_di_deres, ... }] }
-$lahans = $lahanRes['data'] ?? [];
+// Lahan: JSON body = { data: [...] }  → ambil ['data']['data']
+$lahans = $lahanRes['data']['data'] ?? [];
 // Urutkan bulanan: terlama → terbaru untuk grafik
 $bulananAsc = array_reverse($bulanan);
 
