@@ -8,9 +8,10 @@ requireLogin();
 $token = sessionToken();
 
 // ── Ambil data dari API ───────────────────────────────────────────────────
-$profilRes = apiCall('profil',  'GET', [], $token);
-$rekapRes  = apiCall('rekap',   'GET', [], $token);
-$lahanRes  = apiCall('lahan',   'GET', [], $token);
+$profilRes  = apiCall('profil',              'GET', [], $token);
+$rekapRes   = apiCall('rekap',               'GET', [], $token);
+$lahanRes   = apiCall('lahan',               'GET', [], $token);
+$setoranRes = apiCall('setoran?per_page=100','GET', [], $token);
 
 // Profil: JSON body = { data: { id, kode_petani, nama, ... } }  → ambil ['data']['data']
 $profil = $profilRes['data']['data'] ?? [];
@@ -22,20 +23,28 @@ $bulanan   = $rekapData['bulanan'] ?? [];
 
 // Lahan: JSON body = { data: [...] }  → ambil ['data']['data']
 $lahans = $lahanRes['data']['data'] ?? [];
-// Urutkan bulanan: terlama → terbaru untuk grafik
-$bulananAsc = array_reverse($bulanan);
+
+// Setoran harian: kelompokkan per tanggal untuk grafik
+$setoranList = $setoranRes['data']['data']['data'] ?? [];
+$daily = [];
+foreach ($setoranList as $s) {
+    $tgl = $s['tanggal_setor'] ?? '';
+    if (!$tgl) continue;
+    $daily[$tgl]['kg']    = ($daily[$tgl]['kg']    ?? 0) + (float)($s['berat_kg']    ?? 0);
+    $daily[$tgl]['harga'] = ($daily[$tgl]['harga'] ?? 0) + (float)($s['total_harga'] ?? 0);
+}
+ksort($daily); // urutkan terlama → terbaru
 
 // ── Siapkan data grafik Chart.js ──────────────────────────────────────────
+$monthNames  = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
 $chartLabels = [];
 $chartKg     = [];
 $chartHarga  = [];
-foreach ($bulananAsc as $b) {
-    // Tampilkan bulan dalam format singkat (Sep 24)
-    [$y, $m] = explode('-', $b['bulan']);
-    $monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-    $chartLabels[] = $monthNames[(int)$m - 1] . " '" . substr($y, 2);
-    $chartKg[]     = (float) $b['total_kg'];
-    $chartHarga[]  = (float) $b['total_harga'];
+foreach ($daily as $tgl => $d) {
+    $ts            = strtotime($tgl);
+    $chartLabels[] = date('d', $ts) . ' ' . $monthNames[(int)date('n', $ts) - 1];
+    $chartKg[]     = $d['kg'];
+    $chartHarga[]  = $d['harga'];
 }
 $chartJson = json_encode([
     'labels' => $chartLabels,
